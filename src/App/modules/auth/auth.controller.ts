@@ -15,7 +15,7 @@ import { GetCurrentUserIdFromRefreshToken, Public } from "@/common/decorators";
 import { RtGuard } from "@/common/guards";
 
 import { AuthService } from "./auth.service";
-import type { SigninDto, SignupDto } from "./dto/auth.dto";
+import { SigninDto, SignupDto } from "./dto/auth.dto";
 
 @Controller("api/v1")
 export class AuthController {
