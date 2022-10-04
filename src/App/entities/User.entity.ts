@@ -6,6 +6,14 @@ import {
   CreateDateColumn,
 } from "typeorm";
 
+export enum Roles {
+  ADMIN = "admin",
+  SALLER = "saller",
+  MANAGER = "manager",
+  POINT_OWNER = "point_owner",
+  CEO = "ceo",
+}
+
 @Entity("users")
 export class UserEntity {
   @PrimaryGeneratedColumn()
@@ -35,6 +43,9 @@ export class UserEntity {
   @Column({ type: "varchar", nullable: true, select: false })
   @Exclude()
   refresh_hash: string;
+
+  @Column({ type: "enum", enum: Roles, nullable: false, default: Roles.SALLER })
+  role: Roles;
 
   @CreateDateColumn()
   created_at: Date;
