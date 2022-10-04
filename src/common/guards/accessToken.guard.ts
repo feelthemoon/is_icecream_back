@@ -34,7 +34,7 @@ export class AtGuard extends AuthGuard("jwt") {
 
     if (isPublic) return true;
 
-    const accessToken = request.headers.authorization.split(" ")[1];
+    const accessToken = request.headers.authorization?.split(" ")[1];
     const refreshToken = request.cookies["Refresh"];
 
     if (!accessToken || !refreshToken) {

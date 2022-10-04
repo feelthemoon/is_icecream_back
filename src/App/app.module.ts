@@ -1,12 +1,14 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { APP_GUARD } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { RedisModule } from "nestjs-redis";
 
+import { AtGuard } from "@/common/guards";
+
 import { UserEntity } from "./entities";
-import { AuthModule } from "./modules";
-import { UserModule } from "./modules/user/user.module";
+import { AuthModule, UserModule } from "./modules";
 
 @Module({
   imports: [
@@ -39,6 +41,11 @@ import { UserModule } from "./modules/user/user.module";
     UserModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AtGuard,
+    },
+  ],
 })
 export class AppModule {}
