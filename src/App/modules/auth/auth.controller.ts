@@ -28,7 +28,7 @@ export class AuthController {
     const tokens = await this.authService.signin(signinDto);
     response.setHeader(
       "Set-Cookie",
-      `Refresh=${tokens.refresh_token}; HttpOnly; Path=/; Max-Age=30d`,
+      `Refresh=${tokens.refresh_token}; HttpOnly; Max-Age=30d; SameSite=None; Secure`,
     );
     response.setHeader("Access-Control-Expose-Headers", "Authorization");
     response.setHeader("Authorization", `Bearer ${tokens.access_token}`);
