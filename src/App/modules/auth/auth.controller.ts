@@ -7,6 +7,7 @@ import {
   Res,
   UseGuards,
   Req,
+  Headers,
 } from "@nestjs/common";
 
 import { Request, Response } from "express";
@@ -56,5 +57,17 @@ export class AuthController {
       request.cookies["Refresh"],
     );
     return { type: "Bearer", token: accessToken };
+  }
+
+  @UseGuards(RtGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post("logout")
+  async logout(
+    @GetCurrentUserIdFromRefreshToken() userId: number,
+    @Headers("authorization") reqHeaders,
+    @Res() response: Response,
+  ) {
+    await this.authService.logout(userId, reqHeaders);
+    response.send();
   }
 }
