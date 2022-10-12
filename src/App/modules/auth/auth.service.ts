@@ -8,12 +8,12 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 
 import { compare, hash } from "bcrypt";
+import { RedisService } from "nestjs-redis";
 
 import { UserService } from "APP/modules/user/user.service";
 
 import { SigninDto, SignupDto } from "./dto/auth.dto";
 import { JwtPayload, Tokens } from "./types";
-import { RedisService } from "nestjs-redis";
 
 @Injectable()
 export class AuthService {
