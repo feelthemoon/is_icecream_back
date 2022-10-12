@@ -1,6 +1,8 @@
-import { UserService } from "./user.service";
-import { GetCurrentUserIdFromAccessToken } from "@/common/decorators";
 import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
+
+import { GetCurrentUserIdFromAccessToken } from "@/common/decorators";
+
+import { UserService } from "./user.service";
 
 @Controller("api/v1/users")
 export class UserController {

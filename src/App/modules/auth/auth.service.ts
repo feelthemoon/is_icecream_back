@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 
 import { compare, hash } from "bcrypt";
+import { RedisService } from "nestjs-redis";
 
 import { UserService } from "APP/modules/user/user.service";
 
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
     private readonly userService: UserService,
+    private readonly redisService: RedisService,
   ) {}
 
   async signin(signDto: SigninDto): Promise<Tokens> {
@@ -133,5 +135,13 @@ export class AuthService {
       access_token: at,
       refresh_token: rt,
     };
+  }
+
+  async logout(userId: number, accessToken: string): Promise<boolean> {
+    const redisClient = this.redisService.getClient("revoked_tokens");
+    await redisClient.append(accessToken, "true");
+
+    await this.userService.updateOne(userId, "refresh_hash", null);
+    return true;
   }
 }
