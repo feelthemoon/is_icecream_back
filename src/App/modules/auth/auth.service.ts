@@ -39,6 +39,16 @@ export class AuthService {
       });
     }
 
+    const isPasswordCompared = await compare(signDto.password, user.password);
+
+    if (!isPasswordCompared) {
+      throw new BadRequestException({
+        message: [
+          { type: "invalid_data", text: "Неверный email и/или пароль" },
+        ],
+      });
+    }
+
     if (!user.confirmed) {
       throw new ForbiddenException({
         message: [
@@ -49,15 +59,7 @@ export class AuthService {
         ],
       });
     }
-    const isPasswordCompared = await compare(signDto.password, user.password);
 
-    if (!isPasswordCompared) {
-      throw new BadRequestException({
-        message: [
-          { type: "invalid_data", text: "Неверный email и/или пароль" },
-        ],
-      });
-    }
     const tokens = await this.getTokens(user.id);
     const refreshHash = await hash(tokens.refresh_token, 10);
     await this.userService.updateOne(user.id, "refresh_hash", refreshHash);
