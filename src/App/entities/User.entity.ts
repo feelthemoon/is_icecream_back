@@ -4,16 +4,24 @@ import {
   PrimaryGeneratedColumn,
   Entity,
   CreateDateColumn,
+  JoinColumn,
+  ManyToOne,
 } from "typeorm";
+
+import { StallEntity } from "./Stall.entity";
 
 export enum Roles {
   ADMIN = "admin",
   SALLER = "saller",
   MANAGER = "manager",
-  POINT_OWNER = "point_owner",
-  CEO = "ceo",
 }
 
+export enum UserStatus {
+  WORKING = "working",
+  LEAVE = "leave",
+  VACATION = "vacation",
+  MEDICAL = "medical",
+}
 @Entity("users")
 export class UserEntity {
   @PrimaryGeneratedColumn()
@@ -40,6 +48,9 @@ export class UserEntity {
   @Column({ type: "boolean", nullable: false, default: false })
   confirmed: boolean;
 
+  @Column({ type: "real", nullable: false, default: 0.0 })
+  salary: number;
+
   @Column({ type: "varchar", nullable: true, select: false })
   @Exclude()
   refresh_hash: string;
@@ -47,6 +58,20 @@ export class UserEntity {
   @Column({ type: "enum", enum: Roles, nullable: false, default: Roles.SALLER })
   role: Roles;
 
+  @Column({
+    type: "enum",
+    enum: UserStatus,
+    nullable: false,
+    default: UserStatus.LEAVE,
+  })
+  status: UserStatus;
+
   @CreateDateColumn()
   created_at: Date;
+
+  @ManyToOne(() => StallEntity, (stall: StallEntity) => stall.employees, {
+    nullable: true,
+  })
+  @JoinColumn({ name: "stall_id" })
+  stall: StallEntity;
 }
