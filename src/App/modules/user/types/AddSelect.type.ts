@@ -1,1 +1,1 @@
-export type AddSelectType = "password" | "refresh_hash";
+export type AddSelectType = "password" | "refresh_hash" | "role";

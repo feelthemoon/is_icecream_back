@@ -35,6 +35,7 @@ export class StallEntity {
 
   @ManyToMany(() => ProductEntity, (product: ProductEntity) => product.stalls, {
     cascade: true,
+    nullable: true,
   })
   @JoinTable({
     name: "stall_products",
