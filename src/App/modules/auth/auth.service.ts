@@ -92,7 +92,7 @@ export class AuthService {
 
   async refreshToken(userId: number, refreshToken: string) {
     const user = await this.userService.findBy("id", userId, "refresh_hash");
-    if (!user.refresh_hash)
+    if (!user?.refresh_hash)
       throw new UnauthorizedException({
         message: [{ type: "common_error", text: "Ошибка авторизации" }],
       });

@@ -11,7 +11,7 @@ export class UserController {
   @Get("me")
   @HttpCode(HttpStatus.OK)
   async getMe(@GetCurrentUserIdFromAccessToken() userId: number) {
-    const me = this.userService.findBy("id", userId);
+    const me = await this.userService.findBy("id", userId);
     return me;
   }
 }

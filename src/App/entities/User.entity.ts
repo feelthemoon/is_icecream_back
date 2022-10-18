@@ -55,7 +55,12 @@ export class UserEntity {
   @Exclude()
   refresh_hash: string;
 
-  @Column({ type: "enum", enum: Roles, nullable: false, default: Roles.SALLER })
+  @Column({
+    type: "enum",
+    enum: Roles,
+    nullable: false,
+    default: Roles.SALLER,
+  })
   role: Roles;
 
   @Column({

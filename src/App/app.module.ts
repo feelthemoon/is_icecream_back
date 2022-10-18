@@ -8,7 +8,7 @@ import { RedisModule } from "nestjs-redis";
 import { AtGuard } from "@/common/guards";
 
 import { UserEntity, ProductEntity, StallEntity } from "./entities";
-import { AuthModule, UserModule } from "./modules";
+import { AuthModule, UserModule, StallModule } from "./modules";
 
 @Module({
   imports: [
@@ -39,6 +39,7 @@ import { AuthModule, UserModule } from "./modules";
     }),
     AuthModule,
     UserModule,
+    StallModule,
   ],
   controllers: [],
   providers: [
