@@ -13,8 +13,8 @@ import { UserEntity } from "./User.entity";
 
 @Entity("stalls")
 export class StallEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column({ type: "varchar", nullable: false, length: 255 })
   name: string;

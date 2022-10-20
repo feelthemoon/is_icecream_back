@@ -49,7 +49,7 @@ export class UserService {
   }
 
   async updateOne(
-    id: number,
+    id: string,
     updatedFiled: UpdateFieldType,
     value: string,
   ): Promise<UserEntity | null> {

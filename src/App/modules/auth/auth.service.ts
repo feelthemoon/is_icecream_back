@@ -117,7 +117,7 @@ export class AuthService {
       },
     );
   }
-  async getTokens(userId: number): Promise<Tokens> {
+  async getTokens(userId: string): Promise<Tokens> {
     const jwtPayload: JwtPayload = {
       sub: userId,
     };
@@ -139,7 +139,7 @@ export class AuthService {
     };
   }
 
-  async logout(userId: number, accessToken: string): Promise<boolean> {
+  async logout(userId: string, accessToken: string): Promise<boolean> {
     const redisClient = this.redisService.getClient("revoked_tokens");
     await redisClient.append(accessToken, "true");
 
