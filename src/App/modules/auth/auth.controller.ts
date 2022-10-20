@@ -63,7 +63,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post("logout")
   async logout(
-    @GetCurrentUserIdFromRefreshToken() userId: number,
+    @GetCurrentUserIdFromRefreshToken() userId: string,
     @Headers("authorization") reqHeaders,
     @Res() response: Response,
   ) {

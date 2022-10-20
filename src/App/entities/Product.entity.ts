@@ -17,8 +17,8 @@ export enum ProductTypes {
 
 @Entity("products")
 export class ProductEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column({ type: "varchar", nullable: false, length: 255 })
   name: string;
