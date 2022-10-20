@@ -32,10 +32,16 @@ export class UserService {
       return this.userRepository
         .createQueryBuilder("users")
         .addSelect(`users.${addSelectField}`)
-        .where({ [field]: value })
+        .where({ [field]: value, confirmed: true })
+        .leftJoinAndSelect("users.stall", "stall")
+        .cache(true)
         .getOne();
     }
-    return this.userRepository.findOneBy({ [field]: value });
+    return this.userRepository.findOne({
+      where: { [field]: value, confirmed: true },
+      relations: { stall: true },
+      cache: 1000 * 60 * 60,
+    });
   }
 
   findAllBy(

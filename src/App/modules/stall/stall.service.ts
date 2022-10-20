@@ -21,20 +21,20 @@ export class StallService {
   }
 
   findBy(field: "id" | "name" | "address", value: string | number) {
-    return this.stallRepository.find({
+    return this.stallRepository.findOne({
       where: { [field]: value },
       relations: {
         employees: true,
         products: true,
       },
-      cache: { id: value, milliseconds: 3600 },
+      cache: 1000 * 60 * 60,
     });
   }
 
   findAll() {
     return this.stallRepository.find({
       relations: { employees: true, products: true },
-      cache: { id: 999_999_999, milliseconds: 3600 },
+      cache: 1000 * 60 * 60,
     });
   }
 }
