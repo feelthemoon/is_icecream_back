@@ -32,16 +32,33 @@ export class UserService {
       return this.userRepository
         .createQueryBuilder("users")
         .addSelect(`users.${addSelectField}`)
-        .where({ [field]: value, confirmed: true })
+        .where({ [field]: value })
         .leftJoinAndSelect("users.stall", "stall")
         .cache(true)
         .getOne();
     }
     return this.userRepository.findOne({
-      where: { [field]: value, confirmed: true },
+      where: { [field]: value },
       relations: { stall: true },
       cache: 1000 * 60 * 60,
     });
+  }
+
+  async findAll(page: number) {
+    const perPage = 15;
+    const skip = perPage * page - perPage;
+
+    const [data, total] = await this.userRepository.findAndCount({
+      relations: { stall: true },
+      order: {
+        created_at: {
+          direction: "DESC",
+        },
+      },
+      take: perPage,
+      skip,
+    });
+    return { data, total };
   }
 
   findAllBy(
