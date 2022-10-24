@@ -8,11 +8,10 @@ import {
 } from "@nestjs/common";
 
 import { GetCurrentUserIdFromAccessToken } from "@/common/decorators";
+import { RolesGuard } from "@/common/guards";
+import { Roles } from "APP/entities";
 
 import { UserService } from "./user.service";
-import { Roles } from "APP/entities";
-import { RolesGuard } from "@/common/guards";
-import { log } from "@/common/utils";
 
 @Controller("api/v1/users")
 export class UserController {
@@ -30,7 +29,6 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async getAllUsers(@Param("page") currentPage: number) {
     const users = await this.userService.findAll(currentPage);
-    log(users);
     return users;
   }
 }
