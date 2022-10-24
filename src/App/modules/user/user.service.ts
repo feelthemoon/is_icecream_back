@@ -44,11 +44,12 @@ export class UserService {
     });
   }
 
-  async findAll(page: number) {
+  async findAll(page: number, filters?: any) {
     const perPage = 15;
     const skip = perPage * page - perPage;
 
     const [data, total] = await this.userRepository.findAndCount({
+      where: filters,
       relations: { stall: true },
       order: {
         created_at: {
