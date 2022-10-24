@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Query,
   Req,
   UseGuards,
 } from "@nestjs/common";
@@ -22,8 +23,8 @@ export class UserController {
 
   @Get("me")
   @HttpCode(HttpStatus.OK)
-  async getMe(@GetCurrentUserIdFromAccessToken() userId: number) {
-    const me = await this.userService.findBy("id", userId);
+  async getMe(@GetCurrentUserIdFromAccessToken() userId: string) {
+    const me = await this.userService.findBy({ id: userId });
     return me;
   }
 

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { hash } from "bcrypt";
-import { Like, Repository } from "typeorm";
+import { FindOptionsWhere, Like, Repository } from "typeorm";
 
 import { UserEntity } from "APP/entities";
 import { SignupDto } from "APP/modules/auth/dto/auth.dto";
@@ -24,21 +24,20 @@ export class UserService {
   }
 
   findBy(
-    field: FindFieldType,
-    value: string | number,
+    searchObject: FindOptionsWhere<UserEntity>,
     addSelectField?: AddSelectType,
   ): Promise<UserEntity | null> {
     if (addSelectField) {
       return this.userRepository
         .createQueryBuilder("users")
         .addSelect(`users.${addSelectField}`)
-        .where({ [field]: value })
+        .where(searchObject)
         .leftJoinAndSelect("users.stall", "stall")
         .cache(true)
         .getOne();
     }
     return this.userRepository.findOne({
-      where: { [field]: value },
+      where: searchObject,
       relations: { stall: true },
       cache: 1000 * 60 * 60,
     });
@@ -77,7 +76,7 @@ export class UserService {
     updatedFiled: UpdateFieldType,
     value: string,
   ): Promise<UserEntity | null> {
-    const user = await this.findBy("id", id);
+    const user = await this.findBy({ id });
     if (!user) {
       throw new NotFoundException({
         message: [{ type: "common_error", text: "Ползьватель не найден" }],
@@ -92,10 +91,10 @@ export class UserService {
   }
 
   async updateConfirmed(
-    id: number,
+    id: string,
     isConfirmed: boolean,
   ): Promise<UserEntity | null> {
-    const user = await this.findBy("id", id);
+    const user = await this.findBy({ id });
     if (!user) {
       throw new NotFoundException({
         message: [{ type: "common_error", text: "Пользователь не найден" }],

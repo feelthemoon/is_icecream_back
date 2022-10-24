@@ -4,7 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 
 export const GetCurrentUserIdFromRefreshToken = createParamDecorator(
-  (_: undefined, context: ExecutionContext): number => {
+  (_: undefined, context: ExecutionContext): string => {
     const request: Request = context.switchToHttp().getRequest();
     const jwt = new JwtService();
     return jwt.decode(request.cookies["Refresh"])?.sub;
@@ -12,7 +12,7 @@ export const GetCurrentUserIdFromRefreshToken = createParamDecorator(
 );
 
 export const GetCurrentUserIdFromAccessToken = createParamDecorator(
-  (_: undefined, context: ExecutionContext): number => {
+  (_: undefined, context: ExecutionContext): string => {
     const request: Request = context.switchToHttp().getRequest();
     const jwt = new JwtService();
     return jwt.decode(request.headers.authorization.split(" ")[1])?.sub;

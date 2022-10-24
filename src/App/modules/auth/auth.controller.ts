@@ -49,7 +49,7 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
-    @GetCurrentUserIdFromRefreshToken() userId: number,
+    @GetCurrentUserIdFromRefreshToken() userId: string,
     @Req() request: Request,
   ) {
     const accessToken = await this.authService.refreshToken(
