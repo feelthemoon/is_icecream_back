@@ -26,8 +26,7 @@ export class AuthService {
 
   async signin(signDto: SigninDto): Promise<Tokens> {
     const user = await this.userService.findBy(
-      "email",
-      signDto.email,
+      { email: signDto.email },
       "password",
     );
 
@@ -68,10 +67,9 @@ export class AuthService {
   }
 
   async signup(signupDto: SignupDto): Promise<void> {
-    const isEmailInUse = await this.userService.findBy(
-      "email",
-      signupDto.email,
-    );
+    const isEmailInUse = await this.userService.findBy({
+      email: signupDto.email,
+    });
     if (isEmailInUse)
       throw new BadRequestException({
         message: [
@@ -90,8 +88,8 @@ export class AuthService {
     });
   }
 
-  async refreshToken(userId: number, refreshToken: string) {
-    const user = await this.userService.findBy("id", userId, "refresh_hash");
+  async refreshToken(userId: string, refreshToken: string) {
+    const user = await this.userService.findBy({ id: userId }, "refresh_hash");
     if (!user?.refresh_hash)
       throw new UnauthorizedException({
         message: [{ type: "common_error", text: "Ошибка авторизации" }],

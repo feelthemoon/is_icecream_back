@@ -27,7 +27,7 @@ export const RolesGuard = (role: Roles): Type<CanActivate> => {
 
       const userId = this.jwtService.decode(accessToken).sub;
 
-      const userRoles = (await this.userService.findBy("id", userId)).role;
+      const userRoles = (await this.userService.findBy({ id: userId })).role;
       return userRoles?.includes(role);
     }
   }
