@@ -4,8 +4,11 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Req,
   UseGuards,
 } from "@nestjs/common";
+
+import { Request } from "express";
 
 import { GetCurrentUserIdFromAccessToken } from "@/common/decorators";
 import { RolesGuard } from "@/common/guards";
@@ -27,8 +30,11 @@ export class UserController {
   @UseGuards(RolesGuard(Roles.ADMIN))
   @Get("all/:page")
   @HttpCode(HttpStatus.OK)
-  async getAllUsers(@Param("page") currentPage: number) {
-    const users = await this.userService.findAll(currentPage);
+  async getAllUsers(
+    @Param("page") currentPage: number,
+    @Req() request: Request,
+  ) {
+    const users = await this.userService.findAll(currentPage, request.query);
     return users;
   }
 }
