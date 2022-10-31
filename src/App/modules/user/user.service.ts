@@ -33,13 +33,11 @@ export class UserService {
         .addSelect(`users.${addSelectField}`)
         .where(searchObject)
         .leftJoinAndSelect("users.stall", "stall")
-        .cache(true)
         .getOne();
     }
     return this.userRepository.findOne({
       where: searchObject,
       relations: { stall: true },
-      cache: 1000 * 60 * 60,
     });
   }
 
@@ -75,7 +73,7 @@ export class UserService {
     updatedFiled: UpdateFieldType,
     value: string,
   ): Promise<UserEntity | null> {
-    const user = await this.findBy({ id });
+    const user = await this.findBy({ id }, "password");
     if (!user) {
       throw new NotFoundException({
         message: [{ type: "common_error", text: "Ползьватель не найден" }],
@@ -129,5 +127,9 @@ export class UserService {
       .take(perPage)
       .skip(skip)
       .getManyAndCount();
+  }
+
+  deleteUserById(userId: string) {
+    return this.userRepository.delete({ id: userId });
   }
 }
