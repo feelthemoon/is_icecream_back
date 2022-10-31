@@ -2,12 +2,12 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { hash } from "bcrypt";
-import { FindOptionsWhere, Like, Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 
 import { UserEntity } from "APP/entities";
 import { SignupDto } from "APP/modules/auth/dto/auth.dto";
 
-import { AddSelectType, FindFieldType, UpdateFieldType } from "./types";
+import { AddSelectType, UpdateFieldType } from "./types";
 
 @Injectable()
 export class UserService {
@@ -24,7 +24,7 @@ export class UserService {
   }
 
   findBy(
-    searchObject: FindOptionsWhere<UserEntity>,
+    searchObject: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
     addSelectField?: AddSelectType,
   ): Promise<UserEntity | null> {
     if (addSelectField) {
@@ -62,11 +62,10 @@ export class UserService {
   }
 
   findAllBy(
-    field: FindFieldType,
-    value: string | number,
+    searchObject: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
   ): Promise<UserEntity[]> {
     return this.userRepository.find({
-      where: { [field]: Like(`${value}%`), confirmed: true },
+      where: searchObject,
       cache: 1000 * 60 * 60,
     });
   }
@@ -102,5 +101,23 @@ export class UserService {
     }
     user.confirmed = isConfirmed;
     return this.userRepository.save(user);
+  }
+
+  searchUsersByFullname(value: string) {
+    const fullname = value.replace(/\s/g, "");
+
+    return this.userRepository
+      .createQueryBuilder("users")
+      .where(
+        `CONCAT(users.first_name, users.second_name, users.middle_name) LIKE :fullname
+         OR CONCAT(users.first_name, users.middle_name, users.second_name) LIKE :fullname
+         OR CONCAT(users.second_name, users.first_name, users.middle_name) LIKE :fullname
+         OR CONCAT(users.second_name, users.middle_name, users.first_name) LIKE :fullname
+         OR CONCAT(users.middle_name, users.first_name, users.second_name) LIKE :fullname
+         OR CONCAT(users.middle_name, users.second_name, users.first_name) LIKE :fullname`,
+        { fullname: `%${fullname}%` },
+      )
+      .cache(1000 * 60 * 60)
+      .getManyAndCount();
   }
 }

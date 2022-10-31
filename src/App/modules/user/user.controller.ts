@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Query,
   Req,
   UseGuards,
 } from "@nestjs/common";
@@ -32,8 +33,23 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async getAllUsers(
     @Param("page") currentPage: number,
+    @Query("s") searchString: string,
     @Req() request: Request,
   ) {
+    if (searchString) {
+      const [data, total] = await this.userService.searchUsersByFullname(
+        searchString,
+      );
+      if (total > 0) {
+        return { data, total };
+      } else {
+        const searchedUserByEmail = await this.userService.findBy({
+          email: searchString,
+        });
+
+        return { data: searchedUserByEmail, total: 1 };
+      }
+    }
     const users = await this.userService.findAll(currentPage, request.query);
     return users;
   }
