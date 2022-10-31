@@ -1,9 +1,11 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Post,
   Query,
   Req,
   UseGuards,
@@ -26,6 +28,30 @@ export class UserController {
   async getMe(@GetCurrentUserIdFromAccessToken() userId: string) {
     const me = await this.userService.findBy({ id: userId });
     return me;
+  }
+
+  @UseGuards(RolesGuard(Roles.ADMIN))
+  @Get(":id")
+  @HttpCode(HttpStatus.OK)
+  async getUserInfoById(@Param("id") userId: string) {
+    const user = await this.userService.findBy({ id: userId });
+    return user;
+  }
+
+  @UseGuards(RolesGuard(Roles.ADMIN))
+  @Delete(":id")
+  @HttpCode(HttpStatus.OK)
+  async deleteUserById(@Param("id") userId: string) {
+    await this.userService.deleteUserById(userId);
+    return;
+  }
+
+  @UseGuards(RolesGuard(Roles.ADMIN))
+  @Post(":id")
+  @HttpCode(HttpStatus.OK)
+  async updateConfirmed(@Param("id") userId: string) {
+    await this.userService.updateConfirmed(userId, true);
+    return;
   }
 
   @UseGuards(RolesGuard(Roles.ADMIN))
