@@ -103,21 +103,31 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  searchUsersByFullname(value: string) {
-    const fullname = value.replace(/\s/g, "");
+  searchUsersByFullnameOrEmail(
+    value: string,
+    page: number,
+    filters?: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
+  ) {
+    const perPage = 15;
+    const skip = perPage * page - perPage;
 
+    const fullname = value.replace(/\s/g, "");
     return this.userRepository
       .createQueryBuilder("users")
       .where(
-        `CONCAT(users.first_name, users.second_name, users.middle_name) LIKE :fullname
+        `(CONCAT(users.first_name, users.second_name, users.middle_name) LIKE :fullname
          OR CONCAT(users.first_name, users.middle_name, users.second_name) LIKE :fullname
          OR CONCAT(users.second_name, users.first_name, users.middle_name) LIKE :fullname
          OR CONCAT(users.second_name, users.middle_name, users.first_name) LIKE :fullname
          OR CONCAT(users.middle_name, users.first_name, users.second_name) LIKE :fullname
-         OR CONCAT(users.middle_name, users.second_name, users.first_name) LIKE :fullname`,
-        { fullname: `%${fullname}%` },
+         OR CONCAT(users.middle_name, users.second_name, users.first_name) LIKE :fullname
+         OR users.email LIKE :email)`,
+        { fullname: `%${fullname}%`, email: `%${value}%` },
       )
-      .cache(1000 * 60 * 60)
+      .andWhere(filters)
+      .orderBy("users.created_at", "DESC")
+      .take(perPage)
+      .skip(skip)
       .getManyAndCount();
   }
 }

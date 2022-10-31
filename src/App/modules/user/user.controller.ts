@@ -37,18 +37,13 @@ export class UserController {
     @Req() request: Request,
   ) {
     if (searchString) {
-      const [data, total] = await this.userService.searchUsersByFullname(
+      delete request.query["s"];
+      const [data, total] = await this.userService.searchUsersByFullnameOrEmail(
         searchString,
+        currentPage,
+        request.query,
       );
-      if (total > 0) {
-        return { data, total };
-      } else {
-        const searchedUserByEmail = await this.userService.findBy({
-          email: searchString,
-        });
-
-        return { data: searchedUserByEmail, total: 1 };
-      }
+      return { data, total };
     }
     const users = await this.userService.findAll(currentPage, request.query);
     return users;
