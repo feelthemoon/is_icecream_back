@@ -129,7 +129,13 @@ export class UserService {
       .getManyAndCount();
   }
 
-  deleteUserById(userId: string) {
+  async deleteUserById(userId: string) {
+    const isUserExist = await this.findBy({ id: userId });
+    if (!isUserExist) {
+      throw new NotFoundException({
+        message: [{ type: "common_error", text: "Пользователь не найден" }],
+      });
+    }
     return this.userRepository.delete({ id: userId });
   }
 }
