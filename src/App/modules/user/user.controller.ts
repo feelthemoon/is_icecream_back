@@ -1,11 +1,12 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
-  Post,
+  Patch,
   Query,
   Req,
   UseGuards,
@@ -17,6 +18,7 @@ import { GetCurrentUserIdFromAccessToken } from "@/common/decorators";
 import { RolesGuard } from "@/common/guards";
 import { Roles } from "APP/entities";
 
+import { UserEditDto } from "./dto/UserEdit.dto";
 import { UserService } from "./user.service";
 
 @Controller("api/v1/users")
@@ -47,11 +49,19 @@ export class UserController {
   }
 
   @UseGuards(RolesGuard(Roles.ADMIN))
-  @Post(":id")
+  @Patch(":id")
   @HttpCode(HttpStatus.OK)
   async updateConfirmed(@Param("id") userId: string) {
-    await this.userService.updateConfirmed(userId, true);
+    await this.userService.updateField(userId, "confirmed", true);
     return;
+  }
+
+  @UseGuards(RolesGuard(Roles.ADMIN))
+  @Patch("/edit/:id")
+  @HttpCode(HttpStatus.OK)
+  async updateUser(@Param("id") userId: string, @Body() reqBody: UserEditDto) {
+    const updatedUser = await this.userService.updateOne(userId, reqBody);
+    return updatedUser;
   }
 
   @UseGuards(RolesGuard(Roles.ADMIN))

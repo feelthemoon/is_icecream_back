@@ -61,7 +61,7 @@ export class AuthService {
 
     const tokens = await this.getTokens(user.id);
     const refreshHash = await hash(tokens.refresh_token, 10);
-    await this.userService.updateOne(user.id, "refresh_hash", refreshHash);
+    await this.userService.updateField(user.id, "refresh_hash", refreshHash);
 
     return tokens;
   }
@@ -141,7 +141,7 @@ export class AuthService {
     const redisClient = this.redisService.getClient("revoked_tokens");
     await redisClient.append(accessToken, "true");
 
-    await this.userService.updateOne(userId, "refresh_hash", null);
+    await this.userService.updateField(userId, "refresh_hash", null);
     return true;
   }
 }

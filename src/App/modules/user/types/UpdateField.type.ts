@@ -3,4 +3,5 @@ export type UpdateFieldType =
   | "email"
   | "refresh_hash"
   | "name"
-  | "avatar";
+  | "avatar"
+  | "confirmed";

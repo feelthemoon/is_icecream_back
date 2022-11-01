@@ -7,6 +7,7 @@ import { FindOptionsWhere, Repository } from "typeorm";
 import { UserEntity } from "APP/entities";
 import { SignupDto } from "APP/modules/auth/dto/auth.dto";
 
+import { UserEditDto } from "./dto/UserEdit.dto";
 import { AddSelectType, UpdateFieldType } from "./types";
 
 @Injectable()
@@ -68,28 +69,28 @@ export class UserService {
     });
   }
 
-  async updateOne(
+  async updateField(
     id: string,
-    updatedFiled: UpdateFieldType,
-    value: string,
+    updateField: UpdateFieldType,
+    value: any,
   ): Promise<UserEntity | null> {
     const user = await this.findBy({ id }, "password");
     if (!user) {
       throw new NotFoundException({
-        message: [{ type: "common_error", text: "Ползьватель не найден" }],
+        message: [{ type: "common_error", text: "Пользователь не найден" }],
       });
     }
-    if (updatedFiled === "password") {
+    if (updateField === "password") {
       user.password = await hash(value, 10);
       return this.userRepository.save(user);
     }
-    user[updatedFiled] = value;
+    user[updateField] = value;
     return this.userRepository.save(user);
   }
 
-  async updateConfirmed(
+  async updateOne(
     id: string,
-    isConfirmed: boolean,
+    updateDto: UserEditDto,
   ): Promise<UserEntity | null> {
     const user = await this.findBy({ id });
     if (!user) {
@@ -97,7 +98,9 @@ export class UserService {
         message: [{ type: "common_error", text: "Пользователь не найден" }],
       });
     }
-    user.confirmed = isConfirmed;
+    Object.keys(updateDto).forEach((field) => {
+      user[field] = updateDto[field];
+    });
     return this.userRepository.save(user);
   }
 
