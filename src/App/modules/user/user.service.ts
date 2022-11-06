@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { hash } from "bcrypt";
@@ -98,7 +102,16 @@ export class UserService {
         message: [{ type: "common_error", text: "Пользователь не найден" }],
       });
     }
-    Object.keys(updateDto).forEach((field) => {
+    if (updateDto["email"]) {
+      const duplicateEmail = await this.findBy({ email: updateDto["email"] });
+      if (duplicateEmail)
+        throw new BadRequestException({
+          message: [
+            { type: "invalid_data_email", text: "Этот емайл уже занят" },
+          ],
+        });
+    }
+    Object.keys(updateDto).forEach(async (field) => {
       user[field] = updateDto[field];
     });
     return this.userRepository.save(user);
