@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
-import { Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 
 import { StallEntity } from "APP/entities";
 
@@ -20,21 +20,36 @@ export class StallService {
     });
   }
 
-  findBy(field: "id" | "name" | "address", value: string | number) {
+  findBy(
+    searchObject:
+      | FindOptionsWhere<StallEntity>
+      | FindOptionsWhere<StallEntity>[],
+  ) {
     return this.stallRepository.findOne({
-      where: { [field]: value },
+      where: searchObject,
       relations: {
         employees: true,
         products: true,
       },
-      cache: 1000 * 60 * 60,
     });
   }
 
-  findAll() {
-    return this.stallRepository.find({
+  async findAll(page: number, filters?: any) {
+    const perPage = 15;
+    const skip = perPage * page - perPage;
+
+    const [data, total] = await this.stallRepository.findAndCount({
+      where: filters,
       relations: { employees: true, products: true },
-      cache: 1000 * 60 * 60,
+      order: {
+        created_at: {
+          direction: "DESC",
+        },
+      },
+      take: perPage,
+      skip,
     });
+
+    return { data, total };
   }
 }

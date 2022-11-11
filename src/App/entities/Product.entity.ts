@@ -4,6 +4,7 @@ import {
   Entity,
   CreateDateColumn,
   ManyToMany,
+  UpdateDateColumn,
 } from "typeorm";
 
 import { StallEntity } from "./Stall.entity";
@@ -43,6 +44,9 @@ export class ProductEntity {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @ManyToMany(() => StallEntity, (stall: StallEntity) => stall.products)
   stalls: StallEntity[];

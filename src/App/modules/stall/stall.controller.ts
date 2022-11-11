@@ -6,8 +6,11 @@ import {
   HttpStatus,
   Param,
   Post,
+  Req,
   UseGuards,
 } from "@nestjs/common";
+
+import { Request } from "express";
 
 import { RolesGuard } from "@/common/guards";
 import { Roles } from "APP/entities";
@@ -28,14 +31,14 @@ export class StallController {
 
   @UseGuards(RolesGuard(Roles.ADMIN))
   @HttpCode(HttpStatus.OK)
-  @Get()
-  async findAll() {
-    return await this.stallService.findAll();
+  @Get("all/:page")
+  async findAll(@Param("page") currentPage: number, @Req() request: Request) {
+    return await this.stallService.findAll(currentPage, request.query);
   }
 
   @HttpCode(HttpStatus.OK)
   @Get(":id")
-  async findStallById(@Param("id") id: number) {
-    return await this.stallService.findBy("id", id);
+  async findStallById(@Param("id") id: string) {
+    return await this.stallService.findBy({ id });
   }
 }
