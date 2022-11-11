@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   JoinColumn,
   ManyToOne,
+  UpdateDateColumn,
 } from "typeorm";
 
 import { StallEntity } from "./Stall.entity";
@@ -73,6 +74,9 @@ export class UserEntity {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @ManyToOne(() => StallEntity, (stall: StallEntity) => stall.employees, {
     nullable: true,

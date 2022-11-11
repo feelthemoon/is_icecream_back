@@ -6,6 +6,7 @@ import {
   OneToMany,
   JoinTable,
   ManyToMany,
+  UpdateDateColumn,
 } from "typeorm";
 
 import { ProductEntity } from "./Product.entity";
@@ -16,7 +17,7 @@ export class StallEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: "varchar", nullable: false, length: 255 })
+  @Column({ type: "varchar", nullable: false, length: 255, unique: true })
   name: string;
 
   @Column({ type: "varchar", nullable: false, length: 255 })
@@ -27,6 +28,9 @@ export class StallEntity {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @OneToMany(() => UserEntity, (user: UserEntity) => user.stall, {
     cascade: true,
