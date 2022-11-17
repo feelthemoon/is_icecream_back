@@ -34,7 +34,10 @@ export class StallService {
     });
   }
 
-  async findAll(page: number, filters?: any) {
+  async findAll(
+    page: number,
+    filters?: FindOptionsWhere<StallEntity> | FindOptionsWhere<StallEntity>[],
+  ) {
     const perPage = 15;
     const skip = perPage * page - perPage;
 
