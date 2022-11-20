@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { hash } from "bcrypt";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, IsNull, Repository } from "typeorm";
 
 import { UserEntity } from "APP/entities";
 import { SignupDto } from "APP/modules/auth/dto/auth.dto";
@@ -50,8 +50,17 @@ export class UserService {
     const perPage = 15;
     const skip = perPage * page - perPage;
 
+    const updatedFilters = {};
+
+    Object.keys(filters).forEach((filterName) => {
+      if (filters[filterName] === "null") {
+        updatedFilters[filterName] = IsNull();
+      } else {
+        updatedFilters[filterName] = filters[filterName];
+      }
+    });
     const [data, total] = await this.userRepository.findAndCount({
-      where: filters,
+      where: updatedFilters,
       relations: { stall: true },
       order: {
         created_at: {
@@ -126,8 +135,19 @@ export class UserService {
     const skip = perPage * page - perPage;
 
     const fullname = value.replace(/\s/g, "");
+    const updatedFilters = {};
+
+    Object.keys(filters).forEach((filterName) => {
+      if (filters[filterName] === "null") {
+        updatedFilters[filterName] = IsNull();
+      } else {
+        updatedFilters[filterName] = filters[filterName];
+      }
+    });
+
     return this.userRepository
       .createQueryBuilder("users")
+      .leftJoinAndSelect("users.stall", "stalls")
       .where(
         `(CONCAT(users.first_name, users.second_name, users.middle_name) LIKE :fullname
          OR CONCAT(users.first_name, users.middle_name, users.second_name) LIKE :fullname
@@ -138,7 +158,7 @@ export class UserService {
          OR users.email LIKE :email)`,
         { fullname: `%${fullname}%`, email: `%${value}%` },
       )
-      .andWhere(filters)
+      .andWhere(updatedFilters)
       .orderBy("users.created_at", "DESC")
       .take(perPage)
       .skip(skip)
