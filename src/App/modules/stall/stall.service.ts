@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
 import { FindOptionsWhere, Repository } from "typeorm";
@@ -14,7 +14,21 @@ export class StallService {
     private readonly stallRepository: Repository<StallEntity>,
   ) {}
 
-  create(stall: CreateStallDto) {
+  async create(stall: CreateStallDto) {
+    const isStallWithNameExist = await this.stallRepository.findOne({
+      where: { name: stall.name },
+    });
+
+    if (isStallWithNameExist) {
+      throw new BadRequestException({
+        message: [
+          {
+            type: "invalid_data_name",
+            text: "Точка с таким названием уже существует",
+          },
+        ],
+      });
+    }
     return this.stallRepository.save({
       ...stall,
     });
