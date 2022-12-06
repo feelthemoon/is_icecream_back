@@ -9,8 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { ProductEntity } from "./Product.entity";
-import { UserEntity } from "./User.entity";
+import { ProductEntity, SupplyEntity, UserEntity } from ".";
 
 @Entity("stalls")
 export class StallEntity {
@@ -36,6 +35,17 @@ export class StallEntity {
     cascade: true,
   })
   employees: UserEntity[];
+
+  @ManyToMany(() => SupplyEntity, (supply: SupplyEntity) => supply.stalls, {
+    cascade: true,
+    nullable: true,
+  })
+  @JoinTable({
+    name: "stall_supplies",
+    inverseJoinColumn: { name: "supply_id" },
+    joinColumn: { name: "stall_id" },
+  })
+  supplies: StallEntity[];
 
   @ManyToMany(() => ProductEntity, (product: ProductEntity) => product.stalls, {
     cascade: true,

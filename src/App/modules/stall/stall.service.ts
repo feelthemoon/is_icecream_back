@@ -44,6 +44,7 @@ export class StallService {
       relations: {
         employees: true,
         products: true,
+        supplies: true,
       },
     });
   }
@@ -57,7 +58,7 @@ export class StallService {
 
     const [data, total] = await this.stallRepository.findAndCount({
       where: filters,
-      relations: { employees: true, products: true },
+      relations: { employees: true, products: true, supplies: true },
       order: {
         created_at: {
           direction: "DESC",
