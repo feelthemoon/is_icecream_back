@@ -1,3 +1,4 @@
+import { SupplyEntity, StallEntity } from ".";
 import {
   Column,
   PrimaryGeneratedColumn,
@@ -6,8 +7,6 @@ import {
   ManyToMany,
   UpdateDateColumn,
 } from "typeorm";
-
-import { StallEntity } from "./Stall.entity";
 
 export enum ProductTypes {
   ICECREAM = "icecream",
@@ -50,4 +49,7 @@ export class ProductEntity {
 
   @ManyToMany(() => StallEntity, (stall: StallEntity) => stall.products)
   stalls: StallEntity[];
+
+  @ManyToMany(() => SupplyEntity, (supply: SupplyEntity) => supply.products)
+  supplies: SupplyEntity[];
 }
