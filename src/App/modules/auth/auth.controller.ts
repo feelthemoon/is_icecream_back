@@ -12,7 +12,10 @@ import {
 
 import { Request, Response } from "express";
 
-import { GetCurrentUserIdFromRefreshToken, Public } from "@/common/decorators";
+import {
+  GetCurrentEmployeeIdFromRefreshToken,
+  Public,
+} from "@/common/decorators";
 import { RtGuard } from "@/common/guards";
 
 import { AuthService } from "./auth.service";
@@ -49,7 +52,7 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
-    @GetCurrentUserIdFromRefreshToken() userId: string,
+    @GetCurrentEmployeeIdFromRefreshToken() userId: string,
     @Req() request: Request,
   ) {
     const accessToken = await this.authService.refreshToken(
@@ -63,7 +66,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post("logout")
   async logout(
-    @GetCurrentUserIdFromRefreshToken() userId: string,
+    @GetCurrentEmployeeIdFromRefreshToken() userId: string,
     @Headers("authorization") reqHeaders,
     @Res() response: Response,
   ) {

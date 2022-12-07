@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 
 import { Request } from "express";
 
-export const GetCurrentUserIdFromRefreshToken = createParamDecorator(
+export const GetCurrentEmployeeIdFromRefreshToken = createParamDecorator(
   (_: undefined, context: ExecutionContext): string => {
     const request: Request = context.switchToHttp().getRequest();
     const jwt = new JwtService();
@@ -11,7 +11,7 @@ export const GetCurrentUserIdFromRefreshToken = createParamDecorator(
   },
 );
 
-export const GetCurrentUserIdFromAccessToken = createParamDecorator(
+export const GetCurrentEmployeeIdFromAccessToken = createParamDecorator(
   (_: undefined, context: ExecutionContext): string => {
     const request: Request = context.switchToHttp().getRequest();
     const jwt = new JwtService();

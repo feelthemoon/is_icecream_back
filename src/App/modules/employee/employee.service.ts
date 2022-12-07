@@ -8,39 +8,41 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { hash } from "bcrypt";
 import { FindOptionsWhere, IsNull, Repository } from "typeorm";
 
-import { UserEntity } from "APP/entities";
+import { EmployeeEntity } from "APP/entities";
 import { SignupDto } from "APP/modules/auth/dto/auth.dto";
 
-import { UserEditDto } from "./dto/UserEdit.dto";
+import { EmployeeEditDto } from "./dto/EmployeeEdit.dto";
 import { AddSelectType, UpdateFieldType } from "./types";
 
 @Injectable()
-export class UserService {
+export class EmployeeService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(EmployeeEntity)
+    private readonly employeeRepository: Repository<EmployeeEntity>,
   ) {}
 
-  create(user: SignupDto): Promise<UserEntity> {
-    return this.userRepository.save({
+  create(user: SignupDto): Promise<EmployeeEntity> {
+    return this.employeeRepository.save({
       ...user,
       avatar: `gradient-${Math.floor(Math.random() * 8 + 1)}`,
     });
   }
 
   findBy(
-    searchObject: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
+    searchObject:
+      | FindOptionsWhere<EmployeeEntity>
+      | FindOptionsWhere<EmployeeEntity>[],
     addSelectField?: AddSelectType,
-  ): Promise<UserEntity | null> {
+  ): Promise<EmployeeEntity | null> {
     if (addSelectField) {
-      return this.userRepository
-        .createQueryBuilder("users")
-        .addSelect(`users.${addSelectField}`)
+      return this.employeeRepository
+        .createQueryBuilder("employees")
+        .addSelect(`employees.${addSelectField}`)
         .where(searchObject)
-        .leftJoinAndSelect("users.stall", "stall")
+        .leftJoinAndSelect("employees.stall", "stall")
         .getOne();
     }
-    return this.userRepository.findOne({
+    return this.employeeRepository.findOne({
       where: searchObject,
       relations: { stall: true },
     });
@@ -59,7 +61,7 @@ export class UserService {
         updatedFilters[filterName] = filters[filterName];
       }
     });
-    const [data, total] = await this.userRepository.findAndCount({
+    const [data, total] = await this.employeeRepository.findAndCount({
       where: updatedFilters,
       relations: { stall: true },
       order: {
@@ -74,9 +76,11 @@ export class UserService {
   }
 
   findAllBy(
-    searchObject: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
-  ): Promise<UserEntity[]> {
-    return this.userRepository.find({
+    searchObject:
+      | FindOptionsWhere<EmployeeEntity>
+      | FindOptionsWhere<EmployeeEntity>[],
+  ): Promise<EmployeeEntity[]> {
+    return this.employeeRepository.find({
       where: searchObject,
       cache: 1000 * 60 * 60,
     });
@@ -86,27 +90,27 @@ export class UserService {
     id: string,
     updateField: UpdateFieldType,
     value: any,
-  ): Promise<UserEntity | null> {
-    const user = await this.findBy({ id }, "password");
-    if (!user) {
+  ): Promise<EmployeeEntity | null> {
+    const employee = await this.findBy({ id }, "password");
+    if (!employee) {
       throw new NotFoundException({
         message: [{ type: "common_error", text: "Пользователь не найден" }],
       });
     }
     if (updateField === "password") {
-      user.password = await hash(value, 10);
-      return this.userRepository.save(user);
+      employee.password = await hash(value, 10);
+      return this.employeeRepository.save(employee);
     }
-    user[updateField] = value;
-    return this.userRepository.save(user);
+    employee[updateField] = value;
+    return this.employeeRepository.save(employee);
   }
 
   async updateOne(
     id: string,
-    updateDto: UserEditDto,
-  ): Promise<UserEntity | null> {
-    const user = await this.findBy({ id });
-    if (!user) {
+    updateDto: EmployeeEditDto,
+  ): Promise<EmployeeEntity | null> {
+    const employee = await this.findBy({ id });
+    if (!employee) {
       throw new NotFoundException({
         message: [{ type: "common_error", text: "Пользователь не найден" }],
       });
@@ -121,15 +125,17 @@ export class UserService {
         });
     }
     Object.keys(updateDto).forEach(async (field) => {
-      user[field] = updateDto[field];
+      employee[field] = updateDto[field];
     });
-    return this.userRepository.save(user);
+    return this.employeeRepository.save(employee);
   }
 
-  searchUsersByFullnameOrEmail(
+  searchEmployeesByFullnameOrEmail(
     value: string,
     page: number,
-    filters?: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
+    filters?:
+      | FindOptionsWhere<EmployeeEntity>
+      | FindOptionsWhere<EmployeeEntity>[],
   ) {
     const perPage = 15;
     const skip = perPage * page - perPage;
@@ -145,33 +151,33 @@ export class UserService {
       }
     });
 
-    return this.userRepository
-      .createQueryBuilder("users")
-      .leftJoinAndSelect("users.stall", "stalls")
+    return this.employeeRepository
+      .createQueryBuilder("employees")
+      .leftJoinAndSelect("employees.stall", "stalls")
       .where(
-        `(CONCAT(users.first_name, users.second_name, users.middle_name) LIKE :fullname
-         OR CONCAT(users.first_name, users.middle_name, users.second_name) LIKE :fullname
-         OR CONCAT(users.second_name, users.first_name, users.middle_name) LIKE :fullname
-         OR CONCAT(users.second_name, users.middle_name, users.first_name) LIKE :fullname
-         OR CONCAT(users.middle_name, users.first_name, users.second_name) LIKE :fullname
-         OR CONCAT(users.middle_name, users.second_name, users.first_name) LIKE :fullname
-         OR users.email LIKE :email)`,
+        `(CONCAT(employees.first_name, employees.second_name, employees.middle_name) LIKE :fullname
+         OR CONCAT(employees.first_name, employees.middle_name, employees.second_name) LIKE :fullname
+         OR CONCAT(employees.second_name, employees.first_name, employees.middle_name) LIKE :fullname
+         OR CONCAT(employees.second_name, employees.middle_name, employees.first_name) LIKE :fullname
+         OR CONCAT(employees.middle_name, employees.first_name, employees.second_name) LIKE :fullname
+         OR CONCAT(employees.middle_name, employees.second_name, employees.first_name) LIKE :fullname
+         OR employees.email LIKE :email)`,
         { fullname: `%${fullname}%`, email: `%${value}%` },
       )
       .andWhere(updatedFilters)
-      .orderBy("users.created_at", "DESC")
+      .orderBy("employees.created_at", "DESC")
       .take(perPage)
       .skip(skip)
       .getManyAndCount();
   }
 
-  async deleteUserById(userId: string) {
-    const isUserExist = await this.findBy({ id: userId });
-    if (!isUserExist) {
+  async deleteEmployeeById(employeeId: string) {
+    const isEmployeeExist = await this.findBy({ id: employeeId });
+    if (!isEmployeeExist) {
       throw new NotFoundException({
         message: [{ type: "common_error", text: "Пользователь не найден" }],
       });
     }
-    return this.userRepository.delete({ id: userId });
+    return this.employeeRepository.delete({ id: employeeId });
   }
 }

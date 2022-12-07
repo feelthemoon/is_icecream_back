@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { ProductEntity, SupplyEntity, UserEntity } from ".";
+import { ProductEntity, SupplyEntity, EmployeeEntity } from ".";
 
 @Entity("stalls")
 export class StallEntity {
@@ -31,10 +31,10 @@ export class StallEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(() => UserEntity, (user: UserEntity) => user.stall, {
+  @OneToMany(() => EmployeeEntity, (user: EmployeeEntity) => user.stall, {
     cascade: true,
   })
-  employees: UserEntity[];
+  employees: EmployeeEntity[];
 
   @ManyToMany(() => SupplyEntity, (supply: SupplyEntity) => supply.stalls, {
     cascade: true,

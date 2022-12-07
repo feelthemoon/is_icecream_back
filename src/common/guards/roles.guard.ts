@@ -10,14 +10,14 @@ import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 
 import { Roles } from "APP/entities";
-import { UserService } from "APP/modules/user/user.service";
+import { EmployeeService } from "APP/modules/employee/employee.service";
 
 export const RolesGuard = (role: Roles): Type<CanActivate> => {
   @Injectable()
   class RoleGuardMixin implements CanActivate {
     constructor(
       private readonly jwtService: JwtService,
-      private readonly userService: UserService,
+      private readonly userService: EmployeeService,
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {

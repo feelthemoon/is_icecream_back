@@ -8,13 +8,13 @@ import { RedisModule } from "nestjs-redis";
 import { AtGuard } from "@/common/guards";
 
 import {
-  UserEntity,
+  EmployeeEntity,
   ProductEntity,
   StallEntity,
   SupplyEntity,
   ProviderEntity,
 } from "./entities";
-import { AuthModule, UserModule, StallModule } from "./modules";
+import { AuthModule, EmployeeModule, StallModule } from "./modules";
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { AuthModule, UserModule, StallModule } from "./modules";
       database: process.env.PG_DATABASE,
       host: process.env.PG_HOST,
       entities: [
-        UserEntity,
+        EmployeeEntity,
         ProductEntity,
         StallEntity,
         SupplyEntity,
@@ -50,10 +50,9 @@ import { AuthModule, UserModule, StallModule } from "./modules";
       db: parseInt(process.env.REDIS_DB),
     }),
     AuthModule,
-    UserModule,
+    EmployeeModule,
     StallModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_GUARD,

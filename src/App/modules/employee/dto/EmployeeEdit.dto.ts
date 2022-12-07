@@ -8,9 +8,9 @@ import {
 } from "class-validator";
 
 import { Match } from "@/common/decorators";
-import { Roles, UserStatus } from "APP/entities";
+import { Roles, EmployeeStatus } from "APP/entities";
 
-export class UserEditDto {
+export class EmployeeEditDto {
   @IsOptional()
   @IsEmail()
   @MaxLength(255)
@@ -44,12 +44,12 @@ export class UserEditDto {
 
   @IsOptional()
   @Match([
-    UserStatus.LEAVE,
-    UserStatus.MEDICAL,
-    UserStatus.VACATION,
-    UserStatus.WORKING,
+    EmployeeStatus.LEAVE,
+    EmployeeStatus.MEDICAL,
+    EmployeeStatus.VACATION,
+    EmployeeStatus.WORKING,
   ])
-  status?: UserStatus;
+  status?: EmployeeStatus;
 
   @IsOptional()
   stall_id?: string;
