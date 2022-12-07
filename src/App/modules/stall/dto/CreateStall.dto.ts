@@ -1,6 +1,6 @@
 import { IsString, MaxLength, MinLength, IsArray } from "class-validator";
 
-import { UserEntity } from "APP/entities";
+import { EmployeeEntity } from "APP/entities";
 
 export class CreateStallDto {
   @IsString()
@@ -13,5 +13,5 @@ export class CreateStallDto {
   address: string;
 
   @IsArray()
-  employees: UserEntity[];
+  employees: EmployeeEntity[];
 }

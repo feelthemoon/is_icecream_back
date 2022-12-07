@@ -1,4 +1,4 @@
-export * from "./User.entity";
+export * from "./Employee.entity";
 export * from "./Product.entity";
 export * from "./Stall.entity";
 export * from "./Supply.entity";

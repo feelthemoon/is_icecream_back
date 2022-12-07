@@ -1,7 +1,13 @@
 import * as dotenv from "dotenv";
 import { DataSource } from "typeorm";
 
-import { ProductEntity, StallEntity, UserEntity } from "../../App/entities";
+import {
+  ProductEntity,
+  StallEntity,
+  EmployeeEntity,
+  SupplyEntity,
+  ProviderEntity,
+} from "../../App/entities";
 
 dotenv.config();
 
@@ -12,5 +18,11 @@ export const DB_DATASOURCE = new DataSource({
   password: process.env.PG_PASSWORD,
   database: process.env.PG_DATABASE,
   host: process.env.PG_HOST,
-  entities: [StallEntity, UserEntity, ProductEntity],
+  entities: [
+    StallEntity,
+    EmployeeEntity,
+    ProductEntity,
+    SupplyEntity,
+    ProviderEntity,
+  ],
 });

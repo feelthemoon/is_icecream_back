@@ -10,7 +10,7 @@ import { JwtService } from "@nestjs/jwt";
 import { compare, hash } from "bcrypt";
 import { RedisService } from "nestjs-redis";
 
-import { UserService } from "APP/modules/user/user.service";
+import { EmployeeService } from "APP/modules/employee/employee.service";
 
 import { SigninDto, SignupDto } from "./dto/auth.dto";
 import { JwtPayload, Tokens } from "./types";
@@ -20,7 +20,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
-    private readonly userService: UserService,
+    private readonly userService: EmployeeService,
     private readonly redisService: RedisService,
   ) {}
 

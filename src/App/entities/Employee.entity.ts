@@ -17,14 +17,14 @@ export enum Roles {
   MANAGER = "manager",
 }
 
-export enum UserStatus {
+export enum EmployeeStatus {
   WORKING = "working",
   LEAVE = "leave",
   VACATION = "vacation",
   MEDICAL = "medical",
 }
-@Entity("users")
-export class UserEntity {
+@Entity("employees")
+export class EmployeeEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -66,11 +66,11 @@ export class UserEntity {
 
   @Column({
     type: "enum",
-    enum: UserStatus,
+    enum: EmployeeStatus,
     nullable: false,
-    default: UserStatus.LEAVE,
+    default: EmployeeStatus.LEAVE,
   })
-  status: UserStatus;
+  status: EmployeeStatus;
 
   @CreateDateColumn()
   created_at: Date;
